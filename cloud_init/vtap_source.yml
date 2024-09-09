@@ -1,0 +1,31 @@
+#cloud-config
+write_files:
+  - path: /usr/local/bin/background_script.sh
+    permissions: '0755'
+    # only purpose of this script is to create dummy traffic on VTAP source nodes and set MTU 
+    content: |
+      #!/bin/bash
+      
+      # only primary interface is acting as VTAP source.
+      primary_interface=$(ip -o -4 addr show up scope global | awk '{print $2}')
+
+      # setting up max MTU value allowed for entire packet capture on OCI VCN is 8950
+      # please refer https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/vtap.htm#:~:text=To%20avoid%20any%20packet%20truncation%20in%20VTAP%20captured%20packets%2C%20source%20instance%20interfaces%20must%20have%20their%20MTU%20set%20to%208950%20or%20lower%20for%20IPv4%2C%20or%208930%20or%20lower%20for%20IPv6.%20All%20target%20instances%20should%20have%20their%20NICs%20set%20to%20use%20a%209000%20byte%20MTU%20(the%20default%20in%20standard%20Oracle%20images)
+      ip link set dev $primary_interface mtu 8800 
+
+      # Total duration in seconds (10 hours)
+      total_duration=$((10 * 60 * 60)) 
+      # Interval in seconds
+      interval="0.3" 
+
+      # Calculate the end time
+      end_time=$((SECONDS + total_duration))
+
+      # Run the curl command every 5 seconds until 5 hours have passed
+      while [ $SECONDS -lt $end_time ]; do
+          curl --local-port 15555 "http://${http_file_server_ip}/dummyfile.txt" >> /dev/null
+          sleep $interval
+      done
+
+runcmd:
+  - [ 'nohup', '/usr/local/bin/background_script.sh', '>', '/dev/null', '2>&1', '&' ]

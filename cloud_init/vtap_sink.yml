@@ -1,0 +1,91 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+packages:
+  - dnf
+  - yum
+  - oraclelinux-developer-release-el8 # for OCI CLI
+  - python36-oci-cli # for OCI CLI
+
+write_files:
+  - path: /etc/systemd/system/vtaparchiver.service
+    content: |
+      [Unit]
+      Description=VTap Archiver Service
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      ExecStartPre=/bin/bash -ce 'setenforce 0'
+      ExecStart=/home/opc/vtapsvc.sh ${decap_yes_no}
+      User=root
+      Group=root
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+
+  - path: /home/opc/vtapsvc.sh
+    permissions: '0500'
+    content: |
+      #!/bin/bash
+
+      primary_interface=$(ip -o -4 addr show up scope global | awk '{print $2}')
+      echo "Primary interface name is $primary_interface"
+      timestamp="$(date +%Y_%m_%d__%H_%M_%S)"
+      echo "Current Date is $timestamp"
+      DECAP="$1"
+
+      if [ "$DECAP" == "YES" ] || [ "$DECAP" == "yes" ]; then
+          echo "VTAP mirrorred traffic encapped in VXLAN will be decapsulated, giving you only the inner/original packets as seen by source of VTAP"
+
+          ip link add vxlan_vtap type vxlan id ${vxlan_id} dstport 4789 dev $primary_interface
+          ip link set vxlan_vtap up
+          echo "Created interface vxlan_vtap"
+
+          # disable IPv6 address on interface 
+          sysctl -w net.ipv6.conf.vxlan_vtap.disable_ipv6=1
+          
+          echo "For vxlan traffic forwards from primary interface to vxlan_vtap interface, open port 4789/udp"
+          firewall-cmd --add-port=4789/udp  
+          tcpdump -i vxlan_vtap -tt -vvv -s 9000 -Z root -w /tmp/capture_"$timestamp".pcap -W 50 -C 10K -z /home/opc/uploader.sh
+      else
+          echo "VTAP mirrorred traffic is encapped in VXLAN and wont be decapsulated"
+          tcpdump -i $primary_interface -tt -vvv -s 9000 -Z root -w /tmp/capture_"$timestamp".pcap -W 50 -C 10K -z /home/opc/uploader.sh 'udp port 4789 and vxlan'
+      fi
+
+  - path: /home/opc/uploader.sh
+    permissions: '0500'
+    content: |
+      #!/bin/bash
+      # this script will be invoked as forked new process, by above tcpdump for every pcap file it saves
+
+      time_creation=$(stat -c %w "$@")
+      echo "Time of pcap start is : $time_creation"
+      time_lastmodified=$(stat -c %y "$@")
+      echo "Time of pcap end is : $time_lastmodified"
+      instance_ocid=$(curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/id)
+      
+      bucket_full_path_name=/captured_on_backend_server/"$instance_ocid"/"$time_creation"___"$time_lastmodified".pcap.gz
+      region_code=$(curl -s -H "Authorization: Bearer Oracle" -L http://169.254.169.254/opc/v2/instance/regionInfo/regionIdentifier)
+
+      gzip "$@"
+      oci os object put -bn "${pcap_archival_bucket_name}" --file "$@".gz --name "$bucket_full_path_name"  --auth instance_principal --max-retries 7 --region "$region_code"
+      rm "$@".gz
+
+runcmd:
+  - [ dnf, upgrade, -y ]
+  - [ yum, upgrade, -y ]
+  - [ dnf, config-manager, --enable, ol8_developer ]
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, vtaparchiver.service ]
+  - [ systemctl, start, vtaparchiver.service ]
+  - [ echo, "vtaparchiver.service started"]
+
+
+
+
+
+

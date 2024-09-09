@@ -1,0 +1,27 @@
+#cloud-config
+
+write_files:
+  - path: /etc/systemd/system/simplehttpfileserver.service
+    content: |
+      [Unit]
+      Description=Simple Http File Server Service
+      After=network-online.target
+      Wants=network-online.target
+
+      [Service]
+      Type=simple
+      ExecStartPre=/bin/bash -ce 'firewall-cmd --add-port=80/tcp'
+      ExecStart=/bin/bash -ce ' cd /home/opc ; /usr/bin/python3 -m http.server 80'
+      User=root
+      Group=root
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - [ 'dd', 'if=/dev/random', 'of=/home/opc/dummyfile.txt', 'bs=100', 'count=500'] # 500kb file
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, simplehttpfileserver.service ]
+  - [ systemctl, start, simplehttpfileserver.service ]
+  - [ echo, "simplehttpfileserver.service started"]
