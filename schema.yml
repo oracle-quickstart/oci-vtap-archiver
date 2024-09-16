@@ -3,8 +3,8 @@
 # 
 
 title: "VTAP Archiver"
-description: "Reference Architecture for archiving network capture from VTAP service of OCI"
-informationalText: "Resources created are VCN, Computes, VTAP and its associated capture filters, Object storage bucket, DG and IAM policy"
+description: "Reference Architecture for archiving network capture from VTAP service to Object Storage "
+informationalText: "Resources created are VCN, Computes, VTAP and its associated capture filters, Object storage bucket, DG and IAM policy. Refer README for details."
 schemaVersion: 1.1.0
 version: "20240916"
 
@@ -14,14 +14,14 @@ source:
 
 locale: "en"
 variableGroups:
-  - title: "Basic Hidden"
+  - title: "Tenancy, Compartment and Region"
     variables:
     - compartment_ocid
     - tenancy_ocid
     - region
     visible: true
 
-  - title: "VCN related"
+  - title: "VCN Related"
     variables:
     - vcn_cidr
     - pvt_subnet_cidr_vtap_src_nodes
@@ -29,7 +29,7 @@ variableGroups:
     - pub_subnet_cidr_jumpbox_plus_http_file_server
     visible: true
 
-  - title: "Compute related"
+  - title: "Compute Related"
     variables:
     - instance_shape
     - instance_ocpus
@@ -39,13 +39,13 @@ variableGroups:
     - ssh_public_key_path
     visible: true
 
-  - title: "VTAP related"
+  - title: "VTAP Related"
     variables:
     - vxlan_id
     - decap_yes_or_no
     visible: true
 
-  - title: "Bucket Name"
+  - title: "Bucket Name for storing pcaps"
     variables:
     - bucket_name
     visible: true

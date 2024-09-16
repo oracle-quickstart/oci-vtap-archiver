@@ -44,6 +44,33 @@ Please note that VTAPs can only be started on the *OCI Web Console*. After apply
 
 * You can check status VTAP capture service on your *VTAP Sink* nodes with standard `systemd` commands like `journalctl -u vtaparchiver.service`, or `systemctl status vtaparchiver.service`.
 
+## Deployment
+You have two easy options !
+
+### Using Resource Manager
+This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy. Please log into OCI Web Console, select appropriate region and compartment & then just click the button below:
+
+[![Deploy to Oracle Cloud !](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-vtap-archiver/archive/main.zip)
+
+The console will take you through setup of all the variables required for the deployment.
+
+
+### Locally from your dev-machine
+
+### Prerequisites
+1. Install Terraform
+2. Access to Oracle Cloud Infastructure
+3. Download or clone the repo to your local machine
+  ```sh
+  git clone git@github.com:oracle-quickstart/oci-vtap-archiver.git
+  ```
+4. Run Terraform
+  ```sh
+  terraform init
+  terraform plan -var-file=local.tfvars
+  terraform apply -var-file=local.tfvars
+  ```
+
 ## Possible Improvements
 1. Using log-collectors like FluentBit, Vector may provide a better way to transfer network capture data to OCI Object Storage. FluentBit, Vector can handle backpressure and resume failed uploads from saved checkpoints.
 
