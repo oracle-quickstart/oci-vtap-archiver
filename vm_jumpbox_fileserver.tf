@@ -16,7 +16,7 @@ resource "oci_core_instance" "vm_jumpbox_fileserver" {
   }
 
   metadata = {
-    ssh_authorized_keys = file(var.ssh_public_key_path)
+    ssh_authorized_keys = file(var.ssh_public_key)
     user_data           = base64encode(file("${path.root}/cloud_init/jumpbox_fileserver.yml"))
   }
 

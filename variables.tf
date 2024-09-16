@@ -1,31 +1,19 @@
 variable "tenancy_ocid" {
-  default     = "ocid1.tenancy.oc1..aaaaaaaak2lpej3xxgd6iayoqdzkrlcn6eqlyfc4yqyc4s57hff7yqiouj2q"
   description = "Your Tenancy OCID"
   type        = string
 }
 
 variable "region" {
   description = "OCI region where resources are to be created/maintained, full name like us-ashburn-1"
-  default     = "ca-toronto-1"
   type        = string
 }
 
 variable "compartment_ocid" {
   description = "OCI compartment where resources are to be created & maintained"
   type        = string
-  default     = "ocid1.compartment.oc1..aaaaaaaadakuc7spprlkgoi3xyl2kykcl5n2v65bkpk2qli3letohbc4dhvq"
 }
 
-variable "vtap_source_count" {
-  default     = "3"
-  description = "Number of instances to act as VTAP source nodes, HTTP traffic originating from these nodes will be mirrored by VTAP"
-  type        = number
-}
-variable "vtap_sink_count" {
-  default     = "2"
-  description = "Number of 'VTAP sink' instances behind target NLB(of VTAP). These instances will do packet capture and upload it to a bucket"
-  type        = number
-}
+
 variable "bucket_name" {
   description = "Your object storage bucket's name for creation. This is is where your pcap files from VTAP will archived for later access"
   default     = "archival_bkt_pcaps"
@@ -55,6 +43,17 @@ variable "pub_subnet_cidr_jumpbox_plus_http_file_server" {
   type        = string
 }
 
+variable "vtap_source_count" {
+  default     = "3"
+  description = "Number of instances to act as VTAP source nodes, HTTP traffic originating from these nodes will be mirrored by VTAP"
+  type        = number
+}
+variable "vtap_sink_count" {
+  default     = "2"
+  description = "Number of 'VTAP sink' instances behind target NLB(of VTAP). These instances will do packet capture and upload it to a bucket"
+  type        = number
+}
+
 variable "instance_shape" {
   default     = "VM.Standard.A1.Flex"
   description = "Shape for instances, same for both VTAP source and VTAP Sink nodes"
@@ -63,7 +62,7 @@ variable "instance_shape" {
 
 variable "instance_ocpus" {
   default     = 3
-  description = "OCPU count for instances, same for all: VTAP source nodes, VTAP sink nodes"
+  description = "OCPU count for instances, same for both: VTAP source nodes, VTAP sink nodes"
   type        = number
 }
 
@@ -73,8 +72,7 @@ variable "instance_memory_in_gbs" {
   type        = number
 }
 
-variable "ssh_public_key_path" {
-  default     = "~/.ssh/id_rsa.pub"
+variable "ssh_public_key" {
   description = "Full path to the SSH public key file. Used to login to instance with corresponding private key. Will be used for all VMs. In production, use OCI Bastion as jumpbox."
   type        = string
 }

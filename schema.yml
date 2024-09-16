@@ -1,0 +1,86 @@
+# Copyright (c) 2020-2024 Oracle and/or its affiliates. All rights reserved.
+# Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
+# 
+
+title: "VTAP Archiver"
+description: "Reference Architecture for archiving network capture from VTAP service of OCI"
+informationalText: "Resources created are VCN, Computes, VTAP and its associated capture filters, Object storage bucket, DG and IAM policy"
+schemaVersion: 1.1.0
+version: "20240916"
+
+
+source:
+  type: quickstart
+
+locale: "en"
+variableGroups:
+  - title: "Basic Hidden"
+    variables:
+    - compartment_ocid
+    - tenancy_ocid
+    - region
+    visible: true
+
+variableGroups:
+  - title: "VCN related"
+    variables:
+    - vcn_cidr
+    - pvt_subnet_cidr_vtap_src_nodes
+    - pvt_subnet_cidr_sink_nodes
+    - pub_subnet_cidr_jumpbox_plus_http_file_server
+    visible: true
+
+variableGroups:
+  - title: "Compute related"
+    variables:
+    - instance_shape
+    - instance_ocpus
+    - instance_memory_in_gbs
+    - vtap_source_count
+    - vtap_sink_count
+    - ssh_public_key_path
+    visible: true
+
+variableGroups:
+  - title: "VTAP related"
+    variables:
+    - vxlan_id
+    - decap_yes_or_no
+    visible: true
+
+variableGroups:
+  - title: "Bucket Name"
+    variables:
+    - bucket_name
+    visible: true
+
+variables:
+  # Hidden variables
+  tenancy_ocid:
+    type: string
+    title: Tenancy ID
+    description: The Oracle Cloud Identifier (OCID) for your tenancy
+    required: true
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    title: "Compartment"
+    description: "The compartment in which to create compute instance(s)"
+    required: true
+
+  region:
+    type: oci:identity:region:name
+    title: Region
+    description:  The region in which to create all resources 
+
+  # Other variables
+  ssh_public_key:
+    title: SSH public key
+    description: Public SSH key to be included in the ~/.ssh/authorized_keys file for the default user on the instance
+    # renders variable as an SSH key control
+    type: oci:core:ssh:publickey
+    additionalProps:
+      allowMultiple: true
+    required: true
+    default: [""]
+    pattern: "((^(ssh-rsa AAAAB3NzaC1yc2|ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1Mj|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|ssh-dss AAAAB3NzaC1kc3)[0-9A-Za-z+\/]+[=]{0,3})( [^,]*)?)(,((ssh-rsa AAAAB3NzaC1yc2|ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNT|ecdsa-sha2-nistp384 AAAAE2VjZHNhLXNoYTItbmlzdHAzODQAAAAIbmlzdHAzOD|ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1Mj|ssh-ed25519 AAAAC3NzaC1lZDI1NTE5|ssh-dss AAAAB3NzaC1kc3)[0-9A-Za-z+\/]+[=]{0,3})( [^,]*)?)*$"

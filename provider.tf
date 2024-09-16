@@ -31,19 +31,16 @@ terraform {
 # }
 
 
-variable "config_file_profile" {
-  type = string
-  default = "DEFAULT"
-}
+
 
 provider "oci" {
   region              = var.region
-  config_file_profile = var.config_file_profile
+  config_file_profile = "DEFAULT"
 }
 
 provider "oci" {
   region              = lookup(local.region_map_key_fname, data.oci_identity_tenancy.tenancy.home_region_key)
   alias               = "home"
-  config_file_profile = var.config_file_profile
+  config_file_profile = "DEFAULT"
 }
 
