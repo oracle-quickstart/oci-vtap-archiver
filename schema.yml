@@ -21,7 +21,6 @@ variableGroups:
     - region
     visible: true
 
-variableGroups:
   - title: "VCN related"
     variables:
     - vcn_cidr
@@ -30,7 +29,6 @@ variableGroups:
     - pub_subnet_cidr_jumpbox_plus_http_file_server
     visible: true
 
-variableGroups:
   - title: "Compute related"
     variables:
     - instance_shape
@@ -41,14 +39,12 @@ variableGroups:
     - ssh_public_key_path
     visible: true
 
-variableGroups:
   - title: "VTAP related"
     variables:
     - vxlan_id
     - decap_yes_or_no
     visible: true
 
-variableGroups:
   - title: "Bucket Name"
     variables:
     - bucket_name
