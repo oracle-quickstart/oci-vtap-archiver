@@ -1,3 +1,16 @@
+- [Archive VTAP Traffic to OCI Object Storage](#archive-vtap-traffic-to-oci-object-storage)
+  - [Solution](#solution)
+    - [Architecture](#architecture)
+    - [Details](#details)
+  - [Fine-Tuning](#fine-tuning)
+  - [Deployment](#deployment)
+    - [1. Using Resource Manager](#1-using-resource-manager)
+    - [2. Locally from your dev-machine](#2-locally-from-your-dev-machine)
+  - [Possible Improvements](#possible-improvements)
+  - [Known Limitations](#known-limitations)
+  - [Contact Author](#contact-author)
+
+
 # Archive VTAP Traffic to OCI Object Storage
 OCI Virtual Test Access Point, [VTAP](https://docs.oracle.com/en-us/iaas/Content/Network/Tasks/vtap.htm), is a network traffic mirroring service. It captures a copy of network traffic from a specified source, applies filters to focus on relevant data, and sends it to a target for analysis. This enables use cases such as network troubleshooting, security monitoring, network performance analysis, and compliance auditing.
 
@@ -68,10 +81,10 @@ The *OCI Web Console* will take you through setup of all the variables required 
   terraform apply -var-file=local.tfvars
   ```
 
-### After deployment: Turn on VTAPs for each *VTAP Source* nodes
+> After deployment: Turn on VTAPs for each *VTAP Source* nodes
 Please note that VTAPs can only be started on the *OCI Web Console*. After applying the Terraform configuration, you need to start all your VTAPs on the *OCI Web Console*, as shown below.
 
-<kbd><img src="images/start_vtap_on_console.png?raw=true" width="850"/></kbd>
+> <kbd><img src="images/start_vtap_on_console.png?raw=true" width="850"/></kbd>
 
 
 ## Possible Improvements
