@@ -61,13 +61,13 @@ variableGroups:
 variables:
   tenancy_ocid:
     type: string
-    title: Tenancy ID
+    title: "Tenancy OCID"
     description: The Oracle Cloud Identifier (OCID) for your tenancy
     required: true
 
   compartment_ocid:
     type: oci:identity:compartment:id
-    title: "Compartment"
+    title: "Compartment OCID"
     description: "The compartment in which to create compute instance(s)"
     required: true
 

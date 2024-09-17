@@ -115,7 +115,7 @@ Please note that VTAPs can only be started on the *OCI Web Console*. After apply
 
 2. If you are decapsulating the VTAP traffic of its VXLAN header and there is no trucation at VTAP for the mirrored traffic, you may see packets with lengths in the capture that are way above 9k. But max allowed MTU in OCI VCN is 9k! This happens when `generic receive offloading`(of Linux OS) is enabled on the network interface used for the capture. The interface merges multiple TCP segments and sends the aggregated TCP segment to the upper layer in one go to save on CPU cycles. You can turn it off with `ethtool -K <interface> gro off`. You might want to disable all offloading features of the network interface used for capturing.
 
-3. The `pcap` files/captures under *process* at the time of reboots of *VTAP Sink* node can get abodoned. They will be not be reprocessed after reboots and will remain on the node till manually cleaned up. However `tcpdump` running on *VTAP Sink* node is configured as a `systemd` service, thus will restart automatically after reboot. 
+3. The `pcap` capture files which are under *process*, at the time of reboots of *VTAP Sink* nodes can get abodoned. They will be not be reprocessed after reboots and will remain on the node till manually cleaned up. However as `tcpdump` running on *VTAP Sink* node is configured as a `systemd` service, it will restart automatically after reboot. 
 
 ## Contact Author
 
