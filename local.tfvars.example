@@ -1,0 +1,5 @@
+tenancy_ocid="ocid1.tenancy.oc1..xyz"
+compartment_ocid="ocid1.compartment.oc1..xyz"
+region="us-phoenix-1"
+ssh_public_key="~/.ssh/id_rsa.pub"
+

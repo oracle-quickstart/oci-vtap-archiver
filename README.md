@@ -27,9 +27,6 @@ Please see [variables.tf](variables.tf) to view all the configurable parameters.
 
 We assume you have the requisite OCI IAM permissions for the chosen compartment and region, to create all the necessary OCI resources for this deployment. For help with IAM permissions, please refer to [Common OCI Network IAM Policies](https://docs.oracle.com/en-us/iaas/Content/Identity/Concepts/commonpolicies.htm#top).
 
-Please note that VTAPs can only be started on the *OCI Web Console*. After applying the Terraform configuration, you need to start all your VTAPs on the *OCI Web Console*, as shown below.
-
-<kbd><img src="images/start_vtap_on_console.png?raw=true" width="850"/></kbd>
 
 ## Fine-Tuning
 * We use `tcpdump` to perform the traffic capture on *VTAP Sink* nodes. The `tcpdump` command is in the cloud-init script for [*VTAP Sink*](cloud_init/vtap_sink.yml#41) nodes. It creates a rotating buffer of 50 capture files in *pcap* format, each of size 10 MB. Another [script](cloud_init/vtap_sink.yml#62) picks up each *pcap* file, compresses it, renames it with packet capture duration timestamps, and uploads it to the bucket. After the upload, it deletes the local zip file. Hence, storage consumption on *VTAP Sink* nodes is capped at 500 MB. Feel free to fine-tune these parameters as per your requirements.
@@ -47,36 +44,42 @@ Please note that VTAPs can only be started on the *OCI Web Console*. After apply
 ## Deployment
 You have two easy options !
 
-### Using Resource Manager
-This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy. Please log into OCI Web Console, select appropriate region and compartment & then just click the button below:
+### 1. Using Resource Manager
+This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy. Please log into *OCI Web Console*, select appropriate region and compartment & then just click the button below:
 
 [![Deploy to Oracle Cloud !](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-vtap-archiver/archive/main.zip)
 
-The console will take you through setup of all the variables required for the deployment.
+The *OCI Web Console* will take you through setup of all the variables required for the deployment.
 
 
-### Locally from your dev-machine
+### 2. Locally from your dev-machine
 
-### Prerequisites
 1. Install Terraform
 2. Access to Oracle Cloud Infastructure
 3. Download or clone the repo to your local machine
   ```sh
   git clone git@github.com:oracle-quickstart/oci-vtap-archiver.git
   ```
-4. Run Terraform
+4. Replace variable values in `local.tfvars.example` with values as applicable to your OCI tenancy and rename file to `local.tfvars`.
+5. Run Terraform
   ```sh
   terraform init
   terraform plan -var-file=local.tfvars
   terraform apply -var-file=local.tfvars
   ```
 
+### After deployment: Turn on VTAPs for each *VTAP Source* nodes
+Please note that VTAPs can only be started on the *OCI Web Console*. After applying the Terraform configuration, you need to start all your VTAPs on the *OCI Web Console*, as shown below.
+
+<kbd><img src="images/start_vtap_on_console.png?raw=true" width="850"/></kbd>
+
+
 ## Possible Improvements
 1. Using log-collectors like FluentBit, Vector may provide a better way to transfer network capture data to OCI Object Storage. FluentBit, Vector can handle backpressure and resume failed uploads from saved checkpoints.
 
     The pre-conditions for this would be: 
     * S3 API Compatibility needs to be enabled for OCI Object Storage, and 
-    * Network capture output should be in a text format like CSV or JSON. `tshark` can output network capture in CSV or JSON. 
+    * Network capture output should be in a text format like CSV or JSON. Please `tshark` can output network capture in CSV or JSON but `tcpdump` can not. 
 
 2. Using `tshark` for *pcapng* format. 
 
