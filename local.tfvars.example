@@ -1,5 +1,8 @@
+# example values
 tenancy_ocid="ocid1.tenancy.oc1..xyz"
 compartment_ocid="ocid1.compartment.oc1..xyz"
 region="us-phoenix-1"
 ssh_public_key="~/.ssh/id_rsa.pub"
-
+user_ocid="ocid1.user.oc1..xyz"
+fingerprint="10:36:.........."
+private_key_path="/Users/<your username home dir>/.oci/oci_api_key.pem"

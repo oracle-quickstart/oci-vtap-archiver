@@ -60,7 +60,7 @@ You have two easy options !
 ### 1. Using Resource Manager
 This Quick Start uses [OCI Resource Manager](https://docs.cloud.oracle.com/iaas/Content/ResourceManager/Concepts/resourcemanager.htm) to make deployment easy. Please log into *OCI Web Console*, select appropriate region and compartment & then just click the button below:
 
-[![Deploy to Oracle Cloud !](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?region=home&zipUrl=https://github.com/oracle-quickstart/oci-vtap-archiver/archive/main.zip)
+[![Deploy to Oracle Cloud !](https://oci-resourcemanager-plugin.plugins.oci.oraclecloud.com/latest/deploy-to-oracle-cloud.svg)](https://cloud.oracle.com/resourcemanager/stacks/create?zipUrl=https://github.com/oracle-quickstart/oci-vtap-archiver/archive/main.zip)
 
 The *OCI Web Console* will take you through setup of all the variables required for the deployment.
 
