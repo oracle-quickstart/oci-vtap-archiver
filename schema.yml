@@ -1,6 +1,7 @@
 # Copyright (c) 2020-2024 Oracle and/or its affiliates. All rights reserved.
 # Licensed under the Universal Permissive License v 1.0 as shown at http://oss.oracle.com/licenses/upl.
-# 
+
+# This file is interpreted by OCI RMS. Not used when you are deploying using Terraform from your local dev machine. 
 
 title: "VTAP Archiver"
 description: "Reference Architecture for archiving network capture from VTAP service to Object Storage "
@@ -14,6 +15,13 @@ source:
 
 locale: "en"
 variableGroups:
+  - title: "User Auth, kept hidden as with RMS it is taken care"
+    variables:
+    - user_ocid
+    - fingerprint
+    - private_key_path
+    visible: false
+
   - title: "Tenancy, Compartment and Region"
     variables:
     - compartment_ocid
@@ -45,13 +53,12 @@ variableGroups:
     - decap_yes_or_no
     visible: true
 
-  - title: "Bucket Name for storing pcaps"
+  - title: "Bucket name for storing pcaps"
     variables:
     - bucket_name
     visible: true
 
 variables:
-  # Hidden variables
   tenancy_ocid:
     type: string
     title: Tenancy ID

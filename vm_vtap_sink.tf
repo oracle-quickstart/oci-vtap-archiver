@@ -22,7 +22,7 @@ resource "oci_core_instance" "vm_vtap_sink" {
   }
 
   metadata = {
-    ssh_authorized_keys = file(var.ssh_public_key)
+    ssh_authorized_keys = var.ssh_public_key
     user_data           = base64encode(templatefile("${path.root}/cloud_init/vtap_sink.yml", { pcap_archival_bucket_name  = "${var.bucket_name}", vxlan_id  = "${var.vxlan_id}", decap_yes_no = "${var.decap_yes_or_no}"}))
   }
 

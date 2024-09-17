@@ -17,7 +17,7 @@ resource "oci_core_instance" "vm_vtap_source" {
   }
 
   metadata = {
-    ssh_authorized_keys = file(var.ssh_public_key)
+    ssh_authorized_keys = var.ssh_public_key
     user_data           = base64encode(templatefile("${path.root}/cloud_init/vtap_source.yml", { http_file_server_ip  = "${oci_core_instance.vm_jumpbox_fileserver.private_ip}"}))
   }
 

@@ -73,7 +73,7 @@ variable "instance_memory_in_gbs" {
 }
 
 variable "ssh_public_key" {
-  description = "Full path to the SSH public key file. Used to login to instance with corresponding private key. Will be used for all VMs. In production, use OCI Bastion as jumpbox."
+  description = "Contents SSH public key file. Used to login to instance with corresponding private key. Will be used for all VMs. In production, use OCI Bastion as jumpbox."
   type        = string
 }
 

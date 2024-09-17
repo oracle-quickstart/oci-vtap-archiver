@@ -7,13 +7,10 @@ terraform {
 }
 
 variable "user_ocid" {
-  default = ""
 }
 variable "fingerprint" {
-  default = ""
 }
 variable "private_key_path" {
-  default = ""
 }
 
 provider "oci" {
