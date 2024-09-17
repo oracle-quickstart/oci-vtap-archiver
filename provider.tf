@@ -7,10 +7,13 @@ terraform {
 }
 
 variable "user_ocid" {
+  default = ""
 }
 variable "fingerprint" {
+  default = ""
 }
 variable "private_key_path" {
+  default = ""
 }
 
 provider "oci" {
@@ -21,8 +24,8 @@ provider "oci" {
 }
 
 provider "oci" {
-  alias  = "home"
-  region = lookup(local.region_map_key_fname, data.oci_identity_tenancy.tenancy.home_region_key)
+  alias            = "home"
+  region           = lookup(local.region_map_key_fname, data.oci_identity_tenancy.tenancy.home_region_key)
   tenancy_ocid     = var.tenancy_ocid
   user_ocid        = var.user_ocid
   fingerprint      = var.fingerprint
