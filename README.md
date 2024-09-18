@@ -91,8 +91,8 @@ Please note that VTAPs can only be started on the *OCI Web Console*. After apply
 1. Using log-collectors like FluentBit, Vector may provide a better way to transfer network capture data to OCI Object Storage. FluentBit, Vector can handle backpressure and resume failed uploads from saved checkpoints.
 
     The pre-conditions for this would be: 
-    * S3 API Compatibility needs to be enabled for OCI Object Storage, and 
-    * Network capture output should be in a text format like CSV or JSON. Please `tshark` can output network capture in CSV or JSON but `tcpdump` can not. 
+    * S3 API Compatibility needs to be enabled for OCI Object Storage to leverage output plugin for S3 of these log-collectors, and 
+    * Network capture output should be in a text format like CSV or JSON. Please note `tshark` can output network capture in CSV or JSON but `tcpdump` can not. 
 
 2. Using `tshark` for *pcapng* format. 
 
@@ -108,14 +108,14 @@ Please note that VTAPs can only be started on the *OCI Web Console*. After apply
 * For each packet in the *pcap* files `tcpdump` records count(`bytes on the wire`) it sees during the capture. 
 * For most packets, `count(bytes on the wire)` < `length(original packet)`, as they get truncated before reaching `tcpdump` in VTAP itself is set to lower value of `Max Packet Size`. 
 * Therefore, from the perspective of `tcpdump`, the VTAP truncated packet is the **full original packet**. 
-* This occurs regardless of VXLAN decapsulation.
+* This occurs regardless of if VXLAN decapsulationis performed or not.
 * This occurs regardless truncation at `tcpdump` command with its `snaplen` parameter.
 * With `editcap`, it might be possible to correct the number of `bytes on the wire` in the *pcap* files using `IP Length` header field of the original packet, but I am yet to explore this. 
 * For the curious, please refer to my [discussion](https://ask.wireshark.org/question/35512/tcp-warnings-already-truncated-mirrored-traffic/) with the Wireshark community.
 
 2. If you are decapsulating the VTAP traffic of its VXLAN header and there is no trucation at VTAP for the mirrored traffic, you may see packets with lengths in the capture that are way above 9k. But max allowed MTU in OCI VCN is 9k! This happens when `generic receive offloading`(of Linux OS) is enabled on the network interface used for the capture. The interface merges multiple TCP segments and sends the aggregated TCP segment to the upper layer in one go to save on CPU cycles. You can turn it off with `ethtool -K <interface> gro off`. You might want to disable all offloading features of the network interface used for capturing.
 
-3. The `pcap` capture files which are under *process*, at the time of reboots of *VTAP Sink* nodes can get abodoned. They will be not be reprocessed after reboots and will remain on the node till manually cleaned up. However as `tcpdump` running on *VTAP Sink* node is configured as a `systemd` service, it will restart automatically after reboot. 
+3. At the time of reboots of *VTAP Sink* nodes, `pcap` capture files which are under *process* at that time, can get abodoned. These unfortunate `pcap` capture files will be not be reprocessed after reboots and will remain on the node till manually cleaned up. However, as `tcpdump` running on *VTAP Sink* node is configured as a `systemd` service, it will restart automatically after reboot and continue with the archival of the VTAP traffic. 
 
 ## Contact Author
 
